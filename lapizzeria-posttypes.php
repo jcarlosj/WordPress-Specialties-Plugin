@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       La Pizzeria: Especialidades
  * Plugin URI:        
- * Description:       Agrega Especialidades al sitio web La Pizzería (Custom Post Types, Meta Box)
+ * Description:       Agrega Especialidades al sitio web La Pizzería (Custom Post Types, Meta Box, Taxonomies)
  * Version:           1.0.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
@@ -136,3 +136,37 @@ function lapizzeria_save_meta_boxes( $post_id, $current_post, $update ) {
 }
 add_action( 'save_post', 'lapizzeria_save_meta_boxes', 10, 3 );
 
+
+/** Registrar una Taxonomia */
+function lapizzeria_add_taxonomy() {
+
+	$labels = array(
+        'name' =>           _x( 'Category Menu', 'taxonomy general name', 'lapizzeria' ),
+        'singular_name'     => _x( 'Category Menu', 'taxonomy singular name', 'lapizzeria' ),
+        'search_items'      => __( 'Search Category Menu', 'lapizzeria' ),
+        'all_items'         => __( 'All Categories Menu', 'lapizzeria' ),
+        'parent_item'       => __( 'Parent Menu Category', 'lapizzeria' ),
+        'parent_item_colon' => __( 'Category Menu:', 'lapizzeria' ),
+        'edit_item'         => __( 'Edit Category Menu', 'lapizzeria' ),
+        'update_item'       => __( 'Update Category Menu', 'lapizzeria' ),
+        'add_new_item'      => __( 'Add Category Menu', 'lapizzeria' ),
+        'new_item_name'     => __( 'New Category Menu', 'lapizzeria' ),
+        'menu_name'         => __( 'Category Menu', 'lapizzeria' ),
+	);
+
+	$args = array(
+		'hierarchical'      => true,
+		'labels'            => $labels,
+		'show_ui'           => true,
+		'show_admin_column' => true,
+		'query_var'         => true,
+		'rewrite'           => array( 'slug' => 'lapizzeria-category-menu' ),
+		'show_in_rest'	    => true,
+		'rest_base'	    => 'lapizzeria-category-menu'
+	);
+
+    #   Registra la Taxonomia y la asocia a un Custom Post Type
+	register_taxonomy( 'lapizzeria-category-menu', array( 'specialties' ), $args );     
+}
+
+add_action( 'init', 'lapizzeria_add_taxonomy', 0 );
