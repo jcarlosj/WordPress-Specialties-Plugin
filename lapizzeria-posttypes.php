@@ -176,21 +176,30 @@ add_action( 'init', 'lapizzeria_add_taxonomy', 0 );
 /** Agrega campos al REST API */
 function add_response_fields_to_rest_api() {
 
-    /** Registra un nuevo campo en un tipo de objeto de WordPress existente */
+    /** Registra campos en un tipo de objeto de WordPress existente al API */
     register_rest_field(
         'specialties',          #   Nombre del Objeto (CPT Especialidades)   
-        'price',                #   Nombre del atributo que se agregara
+        'price',                #   Nombre del atributo que se agregara (Meta Box del CTP)
         array(                  #   Matriz de argumentos que se utiliza para manejar el campo registrado
             'get_callback'      => 'lapizzeria_get_price',      #   Opcional. La función de devolución de llamada utilizada para recuperar el valor del campo. El valor predeterminado es 'null'.
             'update_callback'   =>  null,                       #   Opcional. La función de devolución de llamada utilizada para establecer y actualizar el valor del campo. El valor predeterminado es 'null'
             'schema'            =>  null                        #   Opcional. El esquema de este campo. El valor predeterminado es 'null'
         )
     );
+    register_rest_field(
+        'specialties',          #   Nombre del Objeto (CPT Especialidades)   
+        'category_ids',         #   Nombre del atributo que se agregara (Categoria del CTP)
+        array(                  #   Matriz de argumentos que se utiliza para manejar el campo registrado
+            'get_callback'      => 'lapizzeria_get_taxonomy_ids',   #   Opcional. La función de devolución de llamada utilizada para recuperar el valor del campo. El valor predeterminado es 'null'.
+            'update_callback'   =>  null,                           #   Opcional. La función de devolución de llamada utilizada para establecer y actualizar el valor del campo. El valor predeterminado es 'null'
+            'schema'            =>  null                            #   Opcional. El esquema de este campo. El valor predeterminado es 'null'
+        )
+    );
 
 }
 add_action( 'rest_api_init', 'add_response_fields_to_rest_api' );
 
-/** Obtiene el valor del meta box 'price'  */
+/** Obtiene el valor del meta box 'price' del CPT */
 function lapizzeria_get_price() {
 
     #   Verifica si la funcion para obtener un campo NO esta habilitada
@@ -213,4 +222,22 @@ function lapizzeria_get_price() {
     }
 
     return false;
+}
+
+/** Obtiene los terminos registrados en la taxonomia del CPT */
+function lapizzeria_get_taxonomy_ids() {
+    global $post;
+
+    $term_ids = [];
+    $taxonomies = get_object_taxonomies( $post );
+    $terms = get_the_terms( $post -> ID, $taxonomies );
+    // var_dump( $terms );
+
+    foreach ( $terms as $key => $term ) {
+        // print_r( $terms[ $key ] -> term_id );
+        $term_ids[] = $term -> term_id;
+    }
+    // var_dump( $term_ids );
+
+    return $term_ids;
 }
