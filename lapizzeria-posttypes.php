@@ -172,3 +172,45 @@ function lapizzeria_add_taxonomy() {
 }
 
 add_action( 'init', 'lapizzeria_add_taxonomy', 0 );
+
+/** Agrega campos al REST API */
+function add_response_fields_to_rest_api() {
+
+    /** Registra un nuevo campo en un tipo de objeto de WordPress existente */
+    register_rest_field(
+        'specialties',          #   Nombre del Objeto (CPT Especialidades)   
+        'price',                #   Nombre del atributo que se agregara
+        array(                  #   Matriz de argumentos que se utiliza para manejar el campo registrado
+            'get_callback'      => 'lapizzeria_get_price',      #   Opcional. La función de devolución de llamada utilizada para recuperar el valor del campo. El valor predeterminado es 'null'.
+            'update_callback'   =>  null,                       #   Opcional. La función de devolución de llamada utilizada para establecer y actualizar el valor del campo. El valor predeterminado es 'null'
+            'schema'            =>  null                        #   Opcional. El esquema de este campo. El valor predeterminado es 'null'
+        )
+    );
+
+}
+add_action( 'rest_api_init', 'add_response_fields_to_rest_api' );
+
+/** Obtiene el valor del meta box 'price'  */
+function lapizzeria_get_price() {
+
+    #   Verifica si la funcion para obtener un campo NO esta habilitada
+    if( ! function_exists( 'get_post_meta' ) ) {
+        // wp_die( 'get_field no esta habilitado' );
+        return;
+    }
+
+    #   Verifica si existe el campo requerido
+    if( get_post_meta( get_the_ID(), 'price', true ) ) {
+
+        $value = get_post_meta( 
+            get_the_ID(),           #   ID del Post Actual (Specialties)
+            'price',                #   Nombre del campo (Meta Box)
+            true                    #   Si se debe devolver un solo valor. Este parámetro no tiene ningún efecto si no se especifica $key. Valor predeterminado: falso
+        );
+
+        #   Retorna el valor hacia el API Rest
+        return intval( $value ); 
+    }
+
+    return false;
+}
