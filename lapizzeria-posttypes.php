@@ -195,6 +195,15 @@ function add_response_fields_to_rest_api() {
             'schema'            =>  null                            #   Opcional. El esquema de este campo. El valor predeterminado es 'null'
         )
     );
+    register_rest_field(
+        'specialties',          #   Nombre del Objeto (CPT Especialidades)   
+        'featured_image_url',   #   Nombre del atributo que se agregara (Categoria del CTP)
+        array(                  #   Matriz de argumentos que se utiliza para manejar el campo registrado
+            'get_callback'      => 'lapizzeria_get_featured_image_url',   #   Opcional. La función de devolución de llamada utilizada para recuperar el valor del campo. El valor predeterminado es 'null'.
+            'update_callback'   =>  null,                           #   Opcional. La función de devolución de llamada utilizada para establecer y actualizar el valor del campo. El valor predeterminado es 'null'
+            'schema'            =>  null                            #   Opcional. El esquema de este campo. El valor predeterminado es 'null'
+        )
+    );
 
 }
 add_action( 'rest_api_init', 'add_response_fields_to_rest_api' );
@@ -224,7 +233,7 @@ function lapizzeria_get_price() {
     return false;
 }
 
-/** Obtiene los terminos registrados en la taxonomia del CPT */
+/** Obtiene los ids de los terminos registrados en la taxonomia del CPT */
 function lapizzeria_get_taxonomy_ids() {
     global $post;
 
@@ -240,4 +249,20 @@ function lapizzeria_get_taxonomy_ids() {
     // var_dump( $term_ids );
 
     return $term_ids;
+}
+
+/** Obtiene el URL de la imagen destacada del CPT */
+function lapizzeria_get_featured_image_url( $object, $field_name, $request ) {     #   $object: es el objeto consultado por la API en nuestro caso specialties
+
+    #   Verifica si el objeto trae una imagen destacada
+    if( $object[ 'featured_media' ] ) {
+        $featured_image_url = wp_get_attachment_image_src( 
+            $object[ 'featured_media' ],    #   wp_get_attachment_image_src: Requiere el ID de la imagen para obtener su URL
+            'specialties-landscape'         #   Tamano de la imagen definido con anterioridad en el Theme
+        );   
+
+        return $featured_image_url[ 0 ];    #   Del Array de datos de imagen solo retornamos el URL
+    }
+
+    return false;
 }
