@@ -49,7 +49,9 @@ function lapizzeria_add_cpt_specialties() {
 		'hierarchical'       => false,
 		'menu_position'      => 6,
 		'supports'           => array( 'title', 'editor', 'thumbnail' ),
-		'taxonomies'         => array( '' )
+		'taxonomies'         => array( '' ),
+        'show_in_rest'       => true,               #   Habilita el despliege de los datos como una API
+        'rest_base'          => 'api-specialties'   #   Crea el URL o endpoint de acceso a esta data
 	);
 
     #   Registra el Custom Post Type
@@ -66,8 +68,8 @@ function lapizzeria_add_meta_boxes() {
         _x( 'Additional Information', 'lapizzeria' ),       #   Titulo para el Metabox
         'lapizzeria_meta_box_html_price',                   #   Callback: Funcion que dibujará formulario para el Metabox
         array( 'specialties' ),                             #   Nombre del Post o los Post a los que se agregará el Metabox
-        'normal',                                           #   Contexto dentro de la pantalla donde debe mostrarse el cuadro: 'normal', 'side', and 'advanced'. Valor por defecto: 'advanced'
-        'high',                                             #   La prioridad dentro del contexto donde debe mostrarse el cuadro: 'high', 'core', 'default', or 'low'. Valor por defecto: 'default'
+        'side',                                             #   Contexto dentro de la pantalla donde debe mostrarse el cuadro: 'normal', 'side', and 'advanced'. Valor por defecto: 'advanced'
+        'default',                                          #   La prioridad dentro del contexto donde debe mostrarse el cuadro: 'high', 'core', 'default', or 'low'. Valor por defecto: 'default'
         null                                                #   Datos que deben establecerse como la propiedad $ args de la matriz de caja (que es el segundo parámetro que se pasa a su devolución de llamada). Valor por defecto: null
     );
 }
