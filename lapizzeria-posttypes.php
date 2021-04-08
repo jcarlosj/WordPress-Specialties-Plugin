@@ -164,7 +164,7 @@ function lapizzeria_add_taxonomy() {
 		'query_var'         => true,
 		'rewrite'           => array( 'slug' => 'lapizzeria-category-menu' ),
 		'show_in_rest'	    => true,
-		'rest_base'	    => 'lapizzeria-category-menu'
+		'rest_base'	        => 'api-category-menu'
 	);
 
     #   Registra la Taxonomia y la asocia a un Custom Post Type
